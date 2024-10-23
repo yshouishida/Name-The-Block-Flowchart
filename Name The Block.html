@@ -18,7 +18,7 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            max-width: 50%;
+            max-width: 75%;
             position: relative;
         }
 
@@ -169,7 +169,10 @@
 
         @media (max-width: 2560px) {
             input, #text {
-                width: 25%;
+                width: 35%;
+            }
+            #container {
+                width: 45%;
             }
 
         }
@@ -179,12 +182,13 @@
                 width: 50%;
             }
             .modal-content {
-                width: 55%;
+                width: 75%;
                 height: 40%;
             }
             #container {
-                width: 75%;
+                width: 95%;
             }
+
         }
 
     </style>
@@ -201,7 +205,7 @@
             <p class="image-description" id="displayedDescription"></p>
         </div>
 
-        <label for="text">Enter for word:</label>
+        <label for="text">Enter Name:</label>
         <input id="text" type="text" autofocus></input>
         <br>
         <button id="submit">Submit</button>
