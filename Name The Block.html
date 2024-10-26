@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -71,7 +72,7 @@
         }
 
         /* Modal styles */
-        #modal {
+        #modal-settings {
             position: fixed;
             inset: 0;
             background-color: rgba(0, 0, 0, 0.5);
@@ -106,7 +107,34 @@
             gap: 10px;
         }
 
-        .close {
+        #completion-modal {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #completion-modal-content {
+            position: absolute;
+            width: 25%;
+            height: 15%;
+            top: 25%;
+            left: 50%;  
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .close, .close-btn-settings {
             position: absolute;
             top: 5px;
             right: 10px;
@@ -146,6 +174,9 @@
             font-size: 20px;
             margin-top: 10px;
         }
+        #scoreDisplay {
+            display: none;
+        }
 
         #result.correct {   
             color: green;
@@ -174,12 +205,20 @@
             #container {
                 width: 45%;
             }
+            #completion-modal-content {
+                width: 35%;
+                height: 15%;
+                font-size: 95%;
+            }
+            #feedback, #scoreDisplay {
+                font-size: 15px;
+            }
 
         }
         
         @media (max-width: 768px) {
             input, #text {
-                width: 50%;
+                width: 45%;
             }
             .modal-content {
                 width: 75%;
@@ -187,6 +226,14 @@
             }
             #container {
                 width: 95%;
+            }
+            #feedback, #scoreDisplay {
+                font-size: 12px;
+            }
+            #completion-modal-content {
+                width: 75%;
+                height: 15%;
+                font-size: 70%;
             }
 
         }
@@ -210,11 +257,21 @@
         <br>
         <button id="submit">Submit</button>
         <p id="feedback"></p>
+        <p id="scoreDisplay">Score: 0</p>
+        
+
     </div>
 
-    <div id="modal">
-        <div class="modal-content">
+    <div id="completion-modal">
+        <div id="completion-modal-content">
             <span class="close">&times;</span>
+            <p id="completionMessage"></p>
+        </div>
+    </div>
+
+    <div id="modal-settings">
+        <div class="modal-content">
+            <span class="close-btn-settings">&times;</span>
             <div class="select-label-container">
                 <label for="imageWidth">Image Width (px):</label>
                 <select id="imageWidth" style="background-color: #fff;">
@@ -232,10 +289,6 @@
                     <option value="theme2">Light Blue Shapes</option>
                 </select>
             </div>
-
-
-
-
         </div>
     </div>
 
@@ -305,17 +358,53 @@
         let previousWords = [];
         let currentWord = null;
 
+        let score = 0;
+        let guessedImages = 0; 
+
+        function displayScore() {
+            document.getElementById("scoreDisplay").textContent = `Score: ${score}`;
+        }
+
+        function checkThemeCompletion() {
+            if (guessedImages === themes[currentTheme].length) {
+                const completionMessageElement = document.getElementById("completionMessage");
+                
+                
+                completionMessageElement.textContent = `You completed guessed the all block with a score of ${score} / ${guessedImages}.`;
+                
+                
+                if (score >= guessedImages / 2) {
+                    completionMessageElement.style.color = "green"; 
+                } else {
+                    completionMessageElement.style.color = "red"; 
+                }
+
+               
+                completionMessageElement.style.display = "block";
+                completionModal.style.display = "flex";
+                
+                
+                score = 0;
+                guessedImages = 0;
+                displayScore();
+            }
+        }
+
+
+
         function getRandomWord() {
             const availableWords = themes[currentTheme];
-            const filteredWords = availableWords.filter((_, index) => !previousWords.includes(index));
-
+            const filteredWords = availableWords.filter((word, index) => 
+                !previousWords.includes(index) && word.description !== currentWord
+            );
+        
             if (filteredWords.length === 0) {
                 previousWords = [];
                 return getRandomWord();
             }
-
+        
             const randomIndex = Math.floor(Math.random() * filteredWords.length);
-            previousWords.push(randomIndex);
+            previousWords.push(availableWords.indexOf(filteredWords[randomIndex])); // Store the original index
             return filteredWords[randomIndex];
         }
 
@@ -332,7 +421,6 @@
         function submitAnswer() {
             const enteredDescription = document.getElementById("text").value.trim();
             const correctDescription = currentWord;
-
             const feedbackElement = document.getElementById("feedback");
             const displayedImageElement = document.getElementById("displayedImage");
 
@@ -340,17 +428,24 @@
                 feedbackElement.textContent = "Correct!";
                 feedbackElement.style.color = "green";
                 displayedImageElement.classList.remove("shake");
-                displayRandomWord();
-                document.getElementById("text").value = '';
+
+            score += 1;
             } else {
-                feedbackElement.textContent = "Incorrect. Try again.";
+                feedbackElement.textContent = "Incorrect.";
                 feedbackElement.style.color = "red";
                 displayedImageElement.classList.add("shake");
                 setTimeout(() => {
                     displayedImageElement.classList.remove("shake");
                 }, 500);
             }
+
+            guessedImages += 1;
+            displayScore();
+            checkThemeCompletion(); 
+            displayRandomWord();
+            document.getElementById("text").value = ''; 
         }
+
 
         const submitButton = document.getElementById("submit");
         const textInput = document.getElementById("text");
@@ -378,18 +473,26 @@
             displayRandomWord(); // Display a word from the new theme
         });
 
-        const modal = document.getElementById('modal');
+
+        // Modal
+        const modalSettings = document.getElementById('modal-settings');
+        const completionModal = document.getElementById('completion-modal');
 
         document.querySelector('.close').addEventListener('click', () => {
-            modal.style.display = 'none';
+            completionModal.style.display = 'none';
         });
+        document.querySelector('.close-btn-settings').addEventListener('click', () => {
+            modalSettings.style.display = 'none';
+        });
+
         
         document.querySelector('.option-settings').addEventListener('click', () => {
-            modal.style.display = 'flex';
+            modalSettings.style.display = 'flex';
         });
 
         window.addEventListener('click', (event) => {
-            if (event.target === modal) modal.style.display = 'none';
+            if (event.target === modalSettings) modalSettings.style.display = 'none';
+            if (event.target === completionModal) completionModal.style.display = 'none';
         });
     </script>
 </body>
