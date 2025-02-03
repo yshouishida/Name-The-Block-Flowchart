@@ -3,23 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">   
-    <title>Name the block</title>
+    <title>Name the Block</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             text-align: center;
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
             margin: 0;
             padding: 20px;
+            color: #333;
         }
 
         #container {
             margin: 0 auto;
             background-color: #fff;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            max-width: 75%;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
             position: relative;
         }
 
@@ -28,167 +29,98 @@
             top: 10px;
             left: 10px;
             cursor: pointer;
+            transition: transform 0.3s ease;
         }
 
-        select {
-            width: 100%;
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 8px;
-            border: 1px solid #ccc;
+        .option-settings:hover {
+            transform: rotate(90deg);
         }
 
         h1 {
-            color: #333;
+            color: #007bff;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
             margin-top: 10px;
+            font-weight: bold;
         }
 
         input[type="text"] {
-            width: 35%;
-            padding: 5px;
+            width: 60%;
+            padding: 10px;
             font-size: 16px;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 8px;
+            margin-top: 10px;
         }
 
         button {
             background-color: #007bff;
             color: #fff;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             padding: 10px 20px;
-            margin-top: 10px;
+            margin: 10px 5px;
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
-        button#generate:hover {
+        button:hover {
             background-color: #0056b3;
             transform: scale(1.05);
         }
 
-        /* Modal styles */
-        #modal-settings {
-            position: fixed;
-            inset: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            display: none;
-            justify-content: center;
-            align-items: center;
+        button:active {
+            transform: scale(0.95);
         }
 
-        .modal-content {
-            position: absolute;
-            width: 40%;
-            height: 50%;
-            top: 50%;
-            left: 50%;  
-            transform: translate(-50%, -50%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            gap: 20px;
-            border-radius: 10px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        #progress-bar {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
         }
 
-        .select-label-container {
-            width: 30%;
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        #progress {
+            height: 10px;
+            background-color: #007bff;
+            width: 0%;
+            transition: width 0.3s ease;
         }
 
-        #completion-modal {
-            position: fixed;
-            inset: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #completion-modal-content {
-            position: absolute;
-            width: 25%;
-            height: 15%;
-            top: 25%;
-            left: 50%;  
-            transform: translate(-50%, -50%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            gap: 20px;
-            border-radius: 10px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .close, .close-btn-settings {
-            position: absolute;
-            top: 5px;
-            right: 10px;
-            font-size: 30px;
-            cursor: pointer;
-        }
-
-        /* Output section */
-        #output {
-            margin-top: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        #output img {
-            transition: transform 0.3s;
-        }
-
-        #output img:hover {
-            transform: scale(1.1);
-        }
-
-        #output div {
-            text-align: center;
-            margin: 10px;
-        }
-
-        .image-description {
+        #timer {
             font-size: 18px;
-            margin-top: 5px;
+            margin: 10px 0;
+        }
+
+        #hint {
+            font-size: 16px;
+            margin: 10px 0;
             color: #666;
-            display: none;
         }
 
         #feedback {
             font-size: 20px;
             margin-top: 10px;
         }
+
         #scoreDisplay {
-            display: none;
+            font-size: 18px;
+            margin: 10px 0;
         }
 
-        #result.correct {   
-            color: green;
-        }
-
-        #result.wrong {
-            color: red;
+        #highScoreDisplay {
+            font-size: 18px;
+            margin: 10px 0;
+            color: #28a745;
         }
 
         .shake {
             animation: shake 0.3s ease-in-out;
-            border: 2px solid red !important; /* Override the border style for a red border */
+            border: 2px solid red !important;
         }
 
         @keyframes shake {
@@ -198,79 +130,99 @@
             75% { transform: translateX(-5px); }
         }
 
-        @media (max-width: 2560px) {
-            input, #text {
-                width: 35%;
-            }
-            #container {
-                width: 45%;
-            }
-            #completion-modal-content {
-                width: 35%;
-                height: 15%;
-                font-size: 95%;
-            }
-            #feedback, #scoreDisplay {
-                font-size: 15px;
-            }
-
-        }
-        
-        @media (max-width: 768px) {
-            input, #text {
-                width: 45%;
-            }
-            .modal-content {
-                width: 75%;
-                height: 40%;
-            }
-            #container {
-                width: 95%;
-            }
-            #feedback, #scoreDisplay {
-                font-size: 12px;
-            }
-            #completion-modal-content {
-                width: 75%;
-                height: 15%;
-                font-size: 70%;
-            }
-
+        .modal {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
 
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    
     <h1>Name the Block</h1>
-    <h1>Andrei Ababao</h1>
     <div id="container">
         <svg class="option-settings" width="30px" height="30px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="#000000" d="M600.704 64a32 32 0 0 1 30.464 22.208l35.2 109.376c14.784 7.232 28.928 15.36 42.432 24.512l112.384-24.192a32 32 0 0 1 34.432 15.36L944.32 364.8a32 32 0 0 1-4.032 37.504l-77.12 85.12a357.12 357.12 0 0 1 0 49.024l77.12 85.248a32 32 0 0 1 4.032 37.504l-88.704 153.6a32 32 0 0 1-34.432 15.296L708.8 803.904c-13.44 9.088-27.648 17.28-42.368 24.512l-35.264 109.376A32 32 0 0 1 600.704 960H423.296a32 32 0 0 1-30.464-22.208L357.696 828.48a351.616 351.616 0 0 1-42.56-24.64l-112.32 24.256a32 32 0 0 1-34.432-15.36L79.68 659.2a32 32 0 0 1 4.032-37.504l77.12-85.248a357.12 357.12 0 0 1 0-48.896l-77.12-85.248A32 32 0 0 1 79.68 364.8l88.704-153.6a32 32 0 0 1 34.432-15.296l112.32 24.256c13.568-9.152 27.776-17.408 42.56-24.64l35.2-109.312A32 32 0 0 1 423.232 64H600.64zm-23.424 64H446.72l-36.352 113.088-24.512 11.968a294.113 294.113 0 0 0-34.816 20.096l-22.656 15.36-116.224-25.088-65.28 113.152 79.68 88.192-1.92 27.136a293.12 293.12 0 0 0 0 40.192l1.92 27.136-79.808 88.192 65.344 113.152 116.224-25.024 22.656 15.296a294.113 294.113 0 0 0 34.816 20.096l24.512 11.968L446.72 896h130.688l36.48-113.152 24.448-11.904a288.282 288.282 0 0 0 34.752-20.096l22.592-15.296 116.288 25.024 65.28-113.152-79.744-88.192 1.92-27.136a293.12 293.12 0 0 0 0-40.256l-1.92-27.136 79.808-88.128-65.344-113.152-116.288 24.96-22.592-15.232a287.616 287.616 0 0 0-34.752-20.096l-24.448-11.904L577.344 128zM512 320a192 192 0 1 1 0 384 192 192 0 0 1 0-384zm0 64a128 128 0 1 0 0 256 128 128 0 0 0 0-256z"></path></g></svg>
         <br><br>
 
         <div id="display">
-            <img src="" id="displayedImage" width="90px">
-            <p class="image-description" id="displayedDescription"></p>
+            <img src="" id="displayedImage" width="120px">
+            <p class="image-description" id="displayedDescription" style="display: none;"></p>
         </div>
 
         <label for="text">Enter Name:</label>
         <input id="text" type="text" autofocus></input>
         <br>
         <button id="submit">Submit</button>
+        <button id="hintBtn">Hint</button>
+        <button id="skipBtn">Skip</button>
+        <button id="resetBtn">Reset</button>
         <p id="feedback"></p>
+        <p id="hint"></p>
         <p id="scoreDisplay">Score: 0</p>
-        
-
+        <p id="highScoreDisplay">High Score: 0</p>
+        <div id="progress-bar">
+            <div id="progress"></div>
+        </div>
+        <p id="timer">Time: 0s</p>
     </div>
 
-    <div id="completion-modal">
-        <div id="completion-modal-content">
+    <div id="completion-modal" class="modal">
+        <div class="modal-content">
             <span class="close">&times;</span>
             <p id="completionMessage"></p>
         </div>
     </div>
 
-    <div id="modal-settings">
+    <div id="modal-settings" class="modal">
         <div class="modal-content">
             <span class="close-btn-settings">&times;</span>
             <div class="select-label-container">
@@ -293,105 +245,121 @@
         </div>
     </div>
 
+    <footer>
+        <p>Created by <a href="#" target="_blank">Your Name</a> | &copy; 2023</p>
+    </footer>
+
     <script>
         const themes = {    
             theme1: [
-            { path: 'Blue_Theme/annotation.png', description: 'Annotation' },
-            { path: 'Blue_Theme/collate.png', description: 'collate' },
-            { path: 'Blue_Theme/connector.png', description: 'connector' },
-            { path: 'Blue_Theme/data.png', description: 'data' },
-            { path: 'Blue_Theme/database.png', description: 'database' },
-            { path: 'Blue_Theme/decision.png', description: 'decision' },
-            { path: 'Blue_Theme/delay.png', description: 'delay' },
-            { path: 'Blue_Theme/direct data.png', description: 'direct data' },
-            { path: 'Blue_Theme/display.png', description: 'display' },
-            { path: 'Blue_Theme/document.png', description: 'document' },
-            { path: 'Blue_Theme/internal storage.png', description: 'internal storage' },
-            { path: 'Blue_Theme/logical or.png', description: 'logical OR' },
-            { path: 'Blue_Theme/logical and.png', description: 'logical AND' },
-            { path: 'Blue_Theme/loop limit.png', description: 'loop limit' },
-            { path: 'Blue_Theme/manual input.png', description: 'manual input' },
-            { path: 'Blue_Theme/manual loop.png', description: 'manual loop' },
-            { path: 'Blue_Theme/merge.png', description: 'merge' },
-            { path: 'Blue_Theme/multiple document.png', description: 'multiple documents' },
-            { path: 'Blue_Theme/off-page connector.png', description: 'off-page connector' },
-            { path: 'Blue_Theme/paper tape.png', description: 'paper tape' },
-            { path: 'Blue_Theme/preparation.png', description: 'preparation' },
-            { path: 'Blue_Theme/process.png', description: 'process' },
-            { path: 'Blue_Theme/sort.png', description: 'sort' },
-            { path: 'Blue_Theme/stored data.png', description: 'stored data' },
-            { path: 'Blue_Theme/subroutine.png', description: 'subroutine' },
-            { path: 'Blue_Theme/tape data.png', description: 'tape data' },
-            { path: 'Blue_Theme/teminator.png', description: 'terminator' }
+                { path: 'Blue_Theme/annotation.png', description: 'Annotation' },
+                { path: 'Blue_Theme/collate.png', description: 'collate' },
+                { path: 'Blue_Theme/connector.png', description: 'connector' },
+                { path: 'Blue_Theme/data.png', description: 'data' },
+                { path: 'Blue_Theme/database.png', description: 'database' },
+                { path: 'Blue_Theme/decision.png', description: 'decision' },
+                { path: 'Blue_Theme/delay.png', description: 'delay' },
+                { path: 'Blue_Theme/direct data.png', description: 'direct data' },
+                { path: 'Blue_Theme/display.png', description: 'display' },
+                { path: 'Blue_Theme/document.png', description: 'document' },
+                { path: 'Blue_Theme/internal storage.png', description: 'internal storage' },
+                { path: 'Blue_Theme/logical or.png', description: 'logical OR' },
+                { path: 'Blue_Theme/logical and.png', description: 'logical AND' },
+                { path: 'Blue_Theme/loop limit.png', description: 'loop limit' },
+                { path: 'Blue_Theme/manual input.png', description: 'manual input' },
+                { path: 'Blue_Theme/manual loop.png', description: 'manual loop' },
+                { path: 'Blue_Theme/merge.png', description: 'merge' },
+                { path: 'Blue_Theme/multiple document.png', description: 'multiple documents' },
+                { path: 'Blue_Theme/off-page connector.png', description: 'off-page connector' },
+                { path: 'Blue_Theme/paper tape.png', description: 'paper tape' },
+                { path: 'Blue_Theme/preparation.png', description: 'preparation' },
+                { path: 'Blue_Theme/process.png', description: 'process' },
+                { path: 'Blue_Theme/sort.png', description: 'sort' },
+                { path: 'Blue_Theme/stored data.png', description: 'stored data' },
+                { path: 'Blue_Theme/subroutine.png', description: 'subroutine' },
+                { path: 'Blue_Theme/tape data.png', description: 'tape data' },
+                { path: 'Blue_Theme/teminator.png', description: 'terminator' }
             ],
             theme2: [
-            { path: 'LightBlue_Theme/annotation.png', description: 'Annotation' },
-            { path: 'LightBlue_Theme/collate.png', description: 'collate' },
-            { path: 'LightBlue_Theme/connector.png', description: 'connector' },
-            { path: 'LightBlue_Theme/data.png', description: 'data' },
-            { path: 'LightBlue_Theme/database.png', description: 'database' },
-            { path: 'LightBlue_Theme/decision.png', description: 'decision' },
-            { path: 'LightBlue_Theme/delay.png', description: 'delay' },
-            { path: 'LightBlue_Theme/direct data.png', description: 'direct data' },
-            { path: 'LightBlue_Theme/display.png', description: 'display' },
-            { path: 'LightBlue_Theme/document.png', description: 'document' },
-            { path: 'LightBlue_Theme/internal storage.png', description: 'internal storage' },
-            { path: 'LightBlue_Theme/logical or.png', description: 'logical OR' },
-            { path: 'LightBlue_Theme/logical and.png', description: 'logical AND' },
-            { path: 'LightBlue_Theme/loop limit.png', description: 'loop limit' },
-            { path: 'LightBlue_Theme/manual input.png', description: 'manual input' },
-            { path: 'LightBlue_Theme/manual loop.png', description: 'manual loop' },
-            { path: 'LightBlue_Theme/merge.png', description: 'merge' },
-            { path: 'LightBlue_Theme/multiple document.png', description: 'multiple documents' },
-            { path: 'LightBlue_Theme/off-page connector.png', description: 'off-page connector' },
-            { path: 'LightBlue_Theme/paper tape.png', description: 'paper tape' },
-            { path: 'LightBlue_Theme/preparation.png', description: 'preparation' },
-            { path: 'LightBlue_Theme/process.png', description: 'process' },
-            { path: 'LightBlue_Theme/sort.png', description: 'sort' },
-            { path: 'LightBlue_Theme/stored data.png', description: 'stored data' },
-            { path: 'LightBlue_Theme/subroutine.png', description: 'subroutine' },
-            { path: 'LightBlue_Theme/tape data.png', description: 'tape data' },
-            { path: 'LightBlue_Theme/teminator.png', description: 'terminator' }
+                { path: 'LightBlue_Theme/annotation.png', description: 'Annotation' },
+                { path: 'LightBlue_Theme/collate.png', description: 'collate' },
+                { path: 'LightBlue_Theme/connector.png', description: 'connector' },
+                { path: 'LightBlue_Theme/data.png', description: 'data' },
+                { path: 'LightBlue_Theme/database.png', description: 'database' },
+                { path: 'LightBlue_Theme/decision.png', description: 'decision' },
+                { path: 'LightBlue_Theme/delay.png', description: 'delay' },
+                { path: 'LightBlue_Theme/direct data.png', description: 'direct data' },
+                { path: 'LightBlue_Theme/display.png', description: 'display' },
+                { path: 'LightBlue_Theme/document.png', description: 'document' },
+                { path: 'LightBlue_Theme/internal storage.png', description: 'internal storage' },
+                { path: 'LightBlue_Theme/logical or.png', description: 'logical OR' },
+                { path: 'LightBlue_Theme/logical and.png', description: 'logical AND' },
+                { path: 'LightBlue_Theme/loop limit.png', description: 'loop limit' },
+                { path: 'LightBlue_Theme/manual input.png', description: 'manual input' },
+                { path: 'LightBlue_Theme/manual loop.png', description: 'manual loop' },
+                { path: 'LightBlue_Theme/merge.png', description: 'merge' },
+                { path: 'LightBlue_Theme/multiple document.png', description: 'multiple documents' },
+                { path: 'LightBlue_Theme/off-page connector.png', description: 'off-page connector' },
+                { path: 'LightBlue_Theme/paper tape.png', description: 'paper tape' },
+                { path: 'LightBlue_Theme/preparation.png', description: 'preparation' },
+                { path: 'LightBlue_Theme/process.png', description: 'process' },
+                { path: 'LightBlue_Theme/sort.png', description: 'sort' },
+                { path: 'LightBlue_Theme/stored data.png', description: 'stored data' },
+                { path: 'LightBlue_Theme/subroutine.png', description: 'subroutine' },
+                { path: 'LightBlue_Theme/tape data.png', description: 'tape data' },
+                { path: 'LightBlue_Theme/teminator.png', description: 'terminator' }
             ]
         };
 
         let currentTheme = 'theme1';
         let previousWords = [];
         let currentWord = null;
-
         let score = 0;
-        let guessedImages = 0; 
+        let highScore = 0;
+        let guessedImages = 0;
+        let startTime = null;
+        let timerInterval = null;
+
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+            document.getElementById("timer").textContent = `Time: ${elapsedTime}s`;
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
 
         function displayScore() {
             document.getElementById("scoreDisplay").textContent = `Score: ${score}`;
+            if (score > highScore) {
+                highScore = score;
+                document.getElementById("highScoreDisplay").textContent = `High Score: ${highScore}`;
+            }
+        }
+
+        function updateProgress() {
+            const progress = (guessedImages / themes[currentTheme].length) * 100;
+            document.getElementById("progress").style.width = `${progress}%`;
         }
 
         function checkThemeCompletion() {
             if (guessedImages === themes[currentTheme].length) {
+                stopTimer();
                 const completionMessageElement = document.getElementById("completionMessage");
-                
-                
-                completionMessageElement.textContent = `You completed guessed the all block with a score of ${score} / ${guessedImages}.`;
-                
-                
-                if (score >= guessedImages / 2) {
-                    completionMessageElement.style.color = "green"; 
-                } else {
-                    completionMessageElement.style.color = "red"; 
-                }
-
-               
-                completionMessageElement.style.display = "block";
-                completionModal.style.display = "flex";
-                
-                
+                completionMessageElement.textContent = `You completed all blocks with a score of ${score} / ${guessedImages}.`;
+                completionMessageElement.style.color = score >= guessedImages / 2 ? "green" : "red";
+                document.getElementById("completion-modal").style.display = "flex";
                 score = 0;
                 guessedImages = 0;
                 displayScore();
+                updateProgress();
             }
         }
-
-
 
         function getRandomWord() {
             const availableWords = themes[currentTheme];
@@ -405,7 +373,7 @@
             }
         
             const randomIndex = Math.floor(Math.random() * filteredWords.length);
-            previousWords.push(availableWords.indexOf(filteredWords[randomIndex])); // Store the original index
+            previousWords.push(availableWords.indexOf(filteredWords[randomIndex]));
             return filteredWords[randomIndex];
         }
 
@@ -424,13 +392,15 @@
             const correctDescription = currentWord;
             const feedbackElement = document.getElementById("feedback");
             const displayedImageElement = document.getElementById("displayedImage");
+            const hintElement = document.getElementById("hint");
+
+            hintElement.textContent = ` `;
 
             if (enteredDescription.toLowerCase() === correctDescription.toLowerCase()) {
                 feedbackElement.textContent = "Correct!";
                 feedbackElement.style.color = "green";
                 displayedImageElement.classList.remove("shake");
-
-            score += 1;
+                score += 1;
             } else {
                 feedbackElement.textContent = "Incorrect.";
                 feedbackElement.style.color = "red";
@@ -442,14 +412,39 @@
 
             guessedImages += 1;
             displayScore();
-            checkThemeCompletion(); 
+            updateProgress();
+            checkThemeCompletion();
             displayRandomWord();
-            document.getElementById("text").value = ''; 
+            document.getElementById("text").value = '';
         }
 
+        function showHint() {
+            const hintElement = document.getElementById("hint");
+            hintElement.textContent = `Hint: The word starts with "${currentWord[0]}"`;
+        }
+
+        function skipWord() {
+            displayRandomWord();
+            document.getElementById("text").value = '';
+        }
+
+        function resetGame() {
+            score = 0;
+            guessedImages = 0;
+            previousWords = [];
+            displayScore();
+            updateProgress();
+            displayRandomWord();
+            document.getElementById("text").value = '';
+            stopTimer();
+            startTimer();
+        }
 
         const submitButton = document.getElementById("submit");
         const textInput = document.getElementById("text");
+        const hintButton = document.getElementById("hintBtn");
+        const skipButton = document.getElementById("skipBtn");
+        const resetButton = document.getElementById("resetBtn");
 
         textInput.addEventListener("keyup", function(event) {
             if (event.key === "Enter") {
@@ -458,10 +453,14 @@
         });
 
         submitButton.addEventListener("click", submitAnswer);
+        hintButton.addEventListener("click", showHint);
+        skipButton.addEventListener("click", skipWord);
+        resetButton.addEventListener("click", resetGame);
+
         displayRandomWord();
+        startTimer();
 
         const imageWidthSelect = document.getElementById("imageWidth");
-
         imageWidthSelect.addEventListener("change", function () {
             const width = imageWidthSelect.value;
             document.getElementById("displayedImage").style.width = width + 'px';
@@ -470,12 +469,10 @@
         const themeSelect = document.getElementById("themeSelect");
         themeSelect.addEventListener("change", function () {
             currentTheme = themeSelect.value;
-            previousWords = []; // Reset previous words for the new theme
-            displayRandomWord(); // Display a word from the new theme
+            previousWords = [];
+            displayRandomWord();
         });
 
-
-        // Modal
         const modalSettings = document.getElementById('modal-settings');
         const completionModal = document.getElementById('completion-modal');
 
@@ -486,7 +483,6 @@
             modalSettings.style.display = 'none';
         });
 
-        
         document.querySelector('.option-settings').addEventListener('click', () => {
             modalSettings.style.display = 'flex';
         });
